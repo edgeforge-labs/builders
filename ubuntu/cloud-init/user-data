@@ -1,0 +1,44 @@
+#cloud-config
+password: ubuntu
+ssh_pwauth: true
+chpasswd:
+  expire: false
+
+write_files:
+- path: /etc/profile.d/hostname_vars.sh
+  content: |
+    export ROLE="main"
+    export ENV="prd"
+    export COUNTER=01
+
+# # Set the locale and keyboard layout
+locale: nl_BE.UTF-8
+keyboard:
+  layout: be
+
+# # Timezone setup
+timezone: Europe/Brussels
+
+# # Preserve hostname
+preserve_hostname: false
+
+# # Update and upgrade packages on first boot
+package_update: true
+package_upgrade: true
+
+# # Install packages
+packages:
+  - qemu-guest-agent
+  - git
+  - net-tools
+  - nmap
+  - nfs-common
+  - curl
+  - file
+  - build-essential
+  - zsh
+  - neofetch
+  - btop
+  - gh
+  - grub-efi-amd64
+  - shim-signed
