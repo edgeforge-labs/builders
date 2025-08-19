@@ -73,12 +73,6 @@ build {
 
       # Compress the raw image using xz
       # "if [ \"${var.output_raw}\" = true ]; then xz -9 output-${var.ubuntu_version}/ubuntu-${var.ubuntu_version}.raw -v; fi",
-
-      # TODO: automate SCP of the compressed image to a remote server
-      # "if [ \"${var.output_raw}\" = true ]; then scp output-${var.ubuntu_version}/ubuntu-${var.ubuntu_version}.raw.xz root@192.168.10.1:/usr/local/opnsense/www/pxe/; fi"
     ]
   }
 }
-
-# reference:
-# https://github.com/nbarnum/packer-ubuntu-cloud-image/tree/main
