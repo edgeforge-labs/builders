@@ -94,9 +94,13 @@ The script automates post-cloud-init configuration for a Linux instance, ensurin
 - **[Ubuntu Cloud Images](https://cloud-images.ubuntu.com/)** - Official Ubuntu Cloud Images
 - **[Original Template Repository](https://github.com/nbarnum/packer-ubuntu-cloud-image/tree/main)** - Shout out to the original author for the base template, @nbarnum, I used it as a starting point for this project.
 
-# troubleshoot
+## Debugging
+
+Set the environment variable `PACKER_LOG=1` to provide additional debug logging
 
 forward vnc
+
 ```shell
 ssh -N -L 5905:127.0.0.1:5905 sysadmin@x86
 ```
+
