@@ -170,7 +170,7 @@ To inspect the image filesystem without booting:
    exit
    sudo umount /mnt/image
    ```
-
+<!--
 ## Advanced Topics
 
 ### Automating Future Builds
@@ -203,7 +203,7 @@ For advanced ARM64 booting scenarios, you might need to work with U-Boot:
        -device ich9-ahci,id=ahci \
        -device ide-hd,drive=mydisk,bus=ahci.0
    ```
-
+-->
 ## References
 
 - [Customize MOTD](https://www.putorius.net/custom-motd-login-screen-linux.html)
