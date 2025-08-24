@@ -11,39 +11,12 @@ shopt -s extglob
 
 # TODO: check for internet or provide some local way to pull the module.
 # TODO: Add static ip configuration, maybe handle in cloud-init ? or check to handle on firewall/network level with static dhcp lease / dns.
-# Done: Go to a system where functions are hosted in PDS repo.
+
+
+
 # Fetch PDS functions
-function fetch_functions {
-    local repo_base="https://raw.githubusercontent.com/michielvha/PDS/main/bash/module"
-    local tmp_dir="/tmp/PDS/module"
+# TODO: Rework this to using the pds apt package
 
-    # Create a temporary directory if it doesn't exist
-    mkdir -p "$tmp_dir"
-
-    # List of function files to fetch
-    local files=("install.sh" "sysadmin.sh")
-
-    # Download each file and source it
-    for file in "${files[@]}"; do
-        local url="$repo_base/$file"
-        local local_file="$tmp_dir/$file"
-
-        echo "Fetching $url..."
-        curl -fsSL "$url" -o "$local_file"
-
-        # Check if the file was downloaded successfully
-        if [[ -s "$local_file" ]]; then
-            source "$local_file"
-            echo "Sourced: $local_file"
-        else
-            echo "Failed to fetch: $url"
-        fi
-    done
-}
-fetch_functions
-
-# or use online
-# source <(curl -fsSL "https://raw.githubusercontent.com/michielvha/PDS/main/bash/module/install.sh")
 
 
 # --  Environment Variables  --
@@ -63,7 +36,7 @@ CUSTOM_SCRIPT="${MOTD_DIR}/00-mikeshop"
 #vars for user config
 USER_NAME="sysadmin"  # Replace with the admins username you want to create
 # generate key on main tooling server with `ssh-keygen -t ed25519 -C sysadmin@whatever.com` "
-SSH_PUBLIC_KEY="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJuz/p0uJEULyptuR7US4GnGmCziaKLQsxYO5VyAx+Oa sysadmin@mvha.eu.org"  # Replace with your actual public key
+SSH_PUBLIC_KEY="<your_ssh_public_key>"  # Replace with your actual public key
 # zi env vars
 #export HOME=/home/ubuntu
 #export ZDOTDIR=$HOME
