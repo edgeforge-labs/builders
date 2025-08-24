@@ -1,0 +1,59 @@
+#cloud-config
+
+# Setup hostname
+hostname: main-dev-01
+# "{{ purpose }}-{{ env }}-{{ number }}" # we use jinja2 Templating to do this, verify if this is supported, should be
+
+# Set the locale and keyboard layout
+locale: nl_BE.UTF-8
+keyboard:
+  layout: be
+
+# Timezone setup
+timezone: Europe/Brussels
+
+# Preserve hostname
+preserve_hostname: false
+
+# Create our user
+users:
+  - name: sysadmin
+    sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+    homedir : /home/sysadmin
+    shell: /bin/zsh
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDlP/4lJptihdac/RmC+ZWH/XAh7vCehd6yC6/Zist2D+VlWl6v3p0zRE54Gn3wk5DOymhh4sUTT3zuMIokZMPvwinCo+zR6gD7wU0ATYeRZgX8nn6TLEaMXXYjyCIYZPjUXTs4vYJyHVVaZn6cfATk1DG7VtQBgbveyawp9PpLb0G989gt7wxlAaQx1qVpBywwUB7867DNCmYWJH/1gbsz5jNlKgbbn/og/2RMGL3rrgxJ3BQ9O9GjAYb99AqLdeOSx7TKW1vOL+8JDkPpps2RgTINTexwVZWivyEM/3WeFGyOaZVqSpXSTvhEm8E4AmvuvZNJRxQ0JNZd1io/aMpb5Zo1xV/aunX7voLQZ0V1pWNlBvXBjIVUrT7R7Mwmeub5CT1jr+70qhlKP8z4GA/yZXJNlS88mnTqhwngbXU5jdJdFOlFkCbsR/ofOs2n6q5G+H9HtWs8I0S4iJhXSgqDPknaWUZrGH/HT0ux4KJAjdji7TwA5iJvPeV6SJs4F4hz1enW6UQDRhkIRZi1s4CKWGEAPQwULWq+Lxde6TmPnlLoEJzydNohM8AP7e+EQcGYdjEr7rBmV+ihwpvl1QwF6ToPksShX88kWBAL/AaD1hRE7McAeworojhKOoRQ5/O4P9zuY5BJFxmbNXSwHyMBTmJEGmIRQjI4CKxf1XomjQ==
+# disable ssh password auth
+#ssh_pwauth: false
+
+# disable password auth
+write_files:
+  - path: /etc/ssh/sshd_config
+    content: |
+      PasswordAuthentication yes
+      PermitRootLogin yes
+      PubkeyAuthentication yes
+
+# restart ssh and set proper rights on keys
+runcmd:
+  - sudo systemctl restart ssh
+  - sudo chown -R sysadmin:sysadmin /home/sysadmin/.ssh
+  - sudo chmod 700 /home/sysadmin/.ssh
+  - sudo chmod 600 /home/sysadmin/.ssh/authorized_keys
+
+
+
+# Update and upgrade packages on first boot
+package_update: true
+package_upgrade: true
+
+# Install packages => probably move this section to the script
+#packages:
+#  - qemu-guest-agent
+#  - git
+#  - net-tools
+#  - nfs-common
+#  - curl
+#  - file
+#  - build-essential
+#  - neofetch

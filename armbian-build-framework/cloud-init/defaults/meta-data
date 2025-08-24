@@ -1,0 +1,5 @@
+instance_id: armbian
+local-hostname: temp-hostname  # This will be overridden by the custom hostname from user-data
+purpose: main
+env: prd
+number: 01
