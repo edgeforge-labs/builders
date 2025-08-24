@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 
 # this is a native solution and will run when we are building the image, so in theory we don't need to keep the ssh keys and password predictable, because packer won't need to try to reach the machine after it's booted.
 # I'm more a fan of having this config be done by something like packer and only use the framework to pack the cloud-init but let's try the native solution.

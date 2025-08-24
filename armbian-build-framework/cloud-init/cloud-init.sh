@@ -1,4 +1,4 @@
-#
+﻿#
 # SPDX-License-Identifier: GPL-2.0
 # Copyright (c) 2024 Rafel del Valle <rvalle@privaz.io>, Ricardo Pardini <ricardo@pardini.net>
 # This file is a part of the Armbian Build Framework https://github.com/armbian/build/

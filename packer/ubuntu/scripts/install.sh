@@ -1,4 +1,4 @@
-#!/bin/bash -eux
+﻿#!/bin/bash -eux
 # Configuration Management Script:
 # This script is used to configure the instance after the cloud-init process has completed.
 

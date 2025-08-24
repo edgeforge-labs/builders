@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 
 exec ../build/compile.sh \
 BOARD=rock-5a \

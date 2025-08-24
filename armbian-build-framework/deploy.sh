@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 
 # This script will bootstrap a build host to create an image
 ENV=$(pwd)
