@@ -15,7 +15,7 @@ shopt -s extglob
 
 
 # Fetch PDS functions
-# TODO: Rework this to using the pds apt package
+# TODO: Rework fetching the functions to using the pds apt package
 
 
 
@@ -157,26 +157,8 @@ configure_admin (){
 }
 configure_admin
 
-# ! MOVED TO PDS !
-set_sudo_nopasswd() {
-    local user="$1"
-    local sudoers_file="/etc/sudoers.d/$user"
 
-    if [[ -z "$user" ]]; then
-        echo "Usage: set_sudo_nopasswd <username>"
-        return 1
-    fi
 
-    if ! id "$user" &>/dev/null; then
-        echo "User '$user' does not exist."
-        return 2
-    fi
-
-    echo "$user ALL=(ALL) NOPASSWD: ALL" | sudo tee "$sudoers_file" > /dev/null
-
-    sudo chmod 0440 "$sudoers_file"
-    echo "Passwordless sudo enabled for $user."
-}
 set_sudo_nopasswd $USER_NAME
 
 ## TODO: Setup Fail2Ban, edit rules in `/etc/fail2ban/jail.local`
@@ -218,8 +200,7 @@ chmod 600 /etc/netplan/00-installer-config.yaml
 
 # ---
 
-# configure grub
-
+# configure grub so the image becomes bootable
 
 # Ensure EFI partition is mounted
 if ! mount | grep -q '/boot/efi'; then

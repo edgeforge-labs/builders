@@ -1,4 +1,4 @@
-# Packer - Ubuntu Cloud Image (WIP)
+# Ubuntu Cloud Image (WIP)
 
 # ☁️ Cloud-Init Configuration
 
