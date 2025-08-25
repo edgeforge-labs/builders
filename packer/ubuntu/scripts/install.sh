@@ -127,17 +127,17 @@ sudo sed -i 's|^SHELL=.*|SHELL=/bin/zsh|' /etc/default/useradd
 # - UFW
 # - Create system-wide Crontab to auto update system every night at midnight.
 # ============================================
-function restricted_security_profile() {
-  # Disable password authentication and root login, enable public key authentication.
-  sudo sed -i -E '
-      s/^#?PasswordAuthentication yes/PasswordAuthentication no/
-      s/^#?PermitRootLogin prohibit-password/PermitRootLogin no/
-      s/^#?PubkeyAuthentication yes/PubkeyAuthentication yes/
-  ' /etc/ssh/sshd_config
-    # Don't restart service here, should only be applied after provisioning process will be persisted when rebooting.
-}
-restricted_security_profile
-
+restricted_ssh_security_profile
+#function restricted_security_profile() { # => MOVED TO PDS
+#  # Disable password authentication and root login, enable public key authentication.
+#  sudo sed -i -E '
+#      s/^#?PasswordAuthentication yes/PasswordAuthentication no/
+#      s/^#?PermitRootLogin prohibit-password/PermitRootLogin no/
+#      s/^#?PubkeyAuthentication yes/PubkeyAuthentication yes/
+#  ' /etc/ssh/sshd_config
+#    # Don't restart service here, should only be applied after provisioning process will be persisted when rebooting.
+#}
+#restricted_security_profile
 
 configure_admin (){
   # Create the user and set the public key for SSH authentication
