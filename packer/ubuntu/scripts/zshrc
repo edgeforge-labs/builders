@@ -32,14 +32,22 @@ setopt HIST_FIND_NO_DUPS
 
 # --- Enable kubectl autocompletion for zsh ---
 #autoload -Uz compinit && compinit # zi enables this automatically.
-source <(kubectl completion zsh)
+if command -v kubectl >/dev/null 2>&1; then
+    # shellcheck disable=SC1090
+    source <(kubectl completion zsh) 2>/dev/null || true
+    # alias + auto complete for alias
+    alias k='kubectl'
+    compdef __start_kubectl k
+    alias knr='kubectl get pods --field-selector=status.phase!=Running'
+fi
 
-# alias + auto complete for alias
-alias k='kubectl'
-compdef __start_kubectl k
+
+
 
 # --- Various ---
-neofetch
-alias knr='kubectl get pods --field-selector=status.phase!=Running'
+# neofetch
+
+
+# TODO: remove this once apt package is implemented
 # auto source install scripts
 source <(curl -fsSL https://raw.githubusercontent.com/michielvha/PDS/main/bash/module/install.sh)

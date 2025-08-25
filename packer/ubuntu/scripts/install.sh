@@ -29,10 +29,7 @@ ARCH=${ARCH:0:3} # keep only the first 3 characters.
 source /etc/profile.d/hostname_vars.sh
 DOMAIN_NAME="mvha.local" # if you set tailscale domain name (main-x86-prd-01.tail6948f.ts.net) here rke2 will think tailscale is the internal network.
 NEW_HOSTNAME="${ROLE}-${ARCH}-${ENV}-${COUNTER}.${DOMAIN_NAME}"
-# vars for custom motd message
-MOTD_DIR="/etc/update-motd.d"
-BACKUP_DIR="/etc/update-motd.d/backup"
-CUSTOM_SCRIPT="${MOTD_DIR}/00-mikeshop"
+
 #vars for user config
 USER_NAME="sysadmin"  # Replace with the admins username you want to create
 # generate key on main tooling server with `ssh-keygen -t ed25519 -C sysadmin@whatever.com` "
@@ -50,6 +47,7 @@ echo "Cloud-Init finished."
 
 
 # Configure hostname via variables supplied in the user-data file during the cloud init process.
+# TODO: Turn into function and move to PDS
 if [ -n "$NEW_HOSTNAME" ]; then
   echo "new hostname detected: $NEW_HOSTNAME" >> $LOG
   # Set the hostname
@@ -61,7 +59,12 @@ else
   echo "The variable for hostname generation was empty. Cannot set hostname" >> $LOG
 fi
 
-# Configure Custom MOTD
+# -- Configure Custom MOTD --
+# TODO: Turn into function and move to PDS
+# vars for custom motd message
+MOTD_DIR="/etc/update-motd.d"
+BACKUP_DIR="/etc/update-motd.d/backup"
+CUSTOM_SCRIPT="${MOTD_DIR}/00-mikeshop"
 # Create a backup folder
 sudo mkdir -p "$BACKUP_DIR"
 # Check if there are files in the MOTD directory, excluding the backup directory, and move them
@@ -75,11 +78,23 @@ fi
 echo "Setting up neofetch as the new MOTD..."
 cat <<EOF | sudo tee $CUSTOM_SCRIPT
 #!/bin/bash
+
+echo ' ______    _             ______                     '
+echo '|  ____|  | |           |  ____|                    '
+echo '| |__   __| | __ _  ___ | |__ ___  _ __ __ _  ___   '
+echo '|  __| / _\` |/ _\` |/ _ \|  __/ _ \| \`__/ _\` |/ _ \  '
+echo '| |___| (_| | (_| |  __/| | | (_) | | | (_| |  __/  '
+echo '|______\__,_|\__, |\___||_|  \___/|_|  \__, |\___|  '
+echo '              __/ |                     __/ |       '
+echo '             |___/                     |___/        '
+echo ' '
+
 neofetch
 EOF
+
 # Make the new MOTD script executable
 sudo chmod +x $CUSTOM_SCRIPT
-echo "Neofetch has been set as the MOTD. Backup of old scripts is in $BACKUP_DIR." >> $LOG
+echo "Custom MOTD has been configured. Backup of old scripts is in $BACKUP_DIR." >> $LOG
 
 # ============================================
 # Section: Shell Configuration
@@ -97,18 +112,8 @@ echo "Neofetch has been set as the MOTD. Backup of old scripts is in $BACKUP_DIR
 # - Configure default file for new users in /etc/skel/.zshrc referencing /etc/zshrc.
 # ============================================
 
-install_zi(){
-  # install zi - a package manager for zsh.
-    sudo mkdir -p /usr/local/share/zi
-    sudo mkdir -p /.config/zi
-    sudo git clone --depth=1 https://github.com/z-shell/zi /usr/local/share/zi
-}
 install_zi
-
-# this configures zsh for all new users, first create this config then create the new user. Point it to global config.
-cat <<EOF | sudo tee /etc/skel/.zshrc
-source /etc/zshrc
-EOF
+configure_zsh
 
 # Set Zsh as the Default Shell for All New Users
 sudo sed -i 's|^SHELL=.*|SHELL=/bin/zsh|' /etc/default/useradd
@@ -116,8 +121,6 @@ sudo sed -i 's|^SHELL=.*|SHELL=/bin/zsh|' /etc/default/useradd
 #for user in $(awk -F: '{if ($3 >= 1000) print $1}' /etc/passwd); do
 #    sudo chsh -s /bin/zsh "$user"
 #done
-
-
 
 # ============================================
 # Section: Security Hardening
@@ -128,16 +131,6 @@ sudo sed -i 's|^SHELL=.*|SHELL=/bin/zsh|' /etc/default/useradd
 # - Create system-wide Crontab to auto update system every night at midnight.
 # ============================================
 restricted_ssh_security_profile
-#function restricted_security_profile() { # => MOVED TO PDS
-#  # Disable password authentication and root login, enable public key authentication.
-#  sudo sed -i -E '
-#      s/^#?PasswordAuthentication yes/PasswordAuthentication no/
-#      s/^#?PermitRootLogin prohibit-password/PermitRootLogin no/
-#      s/^#?PubkeyAuthentication yes/PubkeyAuthentication yes/
-#  ' /etc/ssh/sshd_config
-#    # Don't restart service here, should only be applied after provisioning process will be persisted when rebooting.
-#}
-#restricted_security_profile
 
 configure_admin (){
   # Create the user and set the public key for SSH authentication
@@ -151,13 +144,9 @@ configure_admin (){
   # Add the user to the sudo group
   echo "==> Adding $USER_NAME to the sudo group..."
   sudo usermod -aG sudo "$USER_NAME"
-  echo "==> Adding sourcing of pds main functions for $USER_NAME."
-  echo "source <(curl -fsSL https://raw.githubusercontent.com/michielvha/PDS/main/bash/module/install.sh)" >> /home/"$USER_NAME"/.bashrc
-  echo "User $USER_NAME created, SSH key added, user added to sudo group and bashrc modified." >> $LOG
+  echo "User $USER_NAME created, SSH key added, user added to sudo group." >> $LOG
 }
 configure_admin
-
-
 
 set_sudo_nopasswd $USER_NAME
 
